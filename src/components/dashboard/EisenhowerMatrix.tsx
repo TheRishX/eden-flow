@@ -19,13 +19,14 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
+  DialogFooter,
 } from '@/components/ui/dialog';
 import { QuadrantColumn } from './QuadrantColumn';
 import { TaskItem } from './TaskItem';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import { CalendarIcon, CheckIcon, ChevronsUpDown, Plus, Circle, Trash2, X } from 'lucide-react';
+import { CalendarIcon, CheckIcon, ChevronsUpDown, Plus, Circle, Trash2, X, Pencil } from 'lucide-react';
 import { Calendar } from '@/components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Button } from '@/components/ui/button';
@@ -407,11 +408,13 @@ const TaskDetails = ({ task, onUpdate, onDelete, onClose }: { task: Todo; onUpda
           </div>
         </div>
       </div>
-
-      <div className="sm:justify-between mt-4 flex justify-between">
-        <Button variant="destructive" onClick={onDelete}>Delete Task</Button>
-        <Button onClick={onClose}>Close</Button>
-      </div>
+      
+      <DialogFooter>
+        <div className="w-full flex justify-between">
+            <Button variant="destructive" onClick={onDelete}>Delete Task</Button>
+            <Button onClick={onClose}>Close</Button>
+        </div>
+      </DialogFooter>
     </div>
   );
 };
@@ -424,6 +427,8 @@ const TAG_COLORS = [
 const TagManager = ({ selectedTagIds, onTagIdsChange }: { selectedTagIds: string[], onTagIdsChange: (ids: string[]) => void }) => {
     const [allTags, setAllTags] = useLocalStorage<Tag[]>('edenflow-tags', []);
     const [open, setOpen] = useState(false);
+    const [inputValue, setInputValue] = useState('');
+
 
     const toggleTag = (tagId: string) => {
         const newTagIds = selectedTagIds.includes(tagId)
@@ -440,6 +445,7 @@ const TagManager = ({ selectedTagIds, onTagIdsChange }: { selectedTagIds: string
         };
         setAllTags(prev => [...prev, newTag]);
         toggleTag(newTag.id);
+        setInputValue('');
     };
 
     const updateTagColor = (tagId: string, color: string) => {
@@ -474,16 +480,15 @@ const TagManager = ({ selectedTagIds, onTagIdsChange }: { selectedTagIds: string
                         return 0;
                       }}
                     >
-                        <CommandInput placeholder="Search or create tag..." />
+                        <CommandInput 
+                          placeholder="Search or create tag..." 
+                          value={inputValue}
+                          onValueChange={setInputValue}
+                        />
                         <CommandList>
-                            <CommandEmpty onSelect={() => {
-                                const input = document.querySelector('input[aria-label="Command input"]');
-                                if (input instanceof HTMLInputElement) {
-                                    createTag(input.value);
-                                }
-                            }}>
-                              <Button variant="ghost" className="w-full justify-start">
-                                  <Plus className="mr-2 h-4 w-4" /> Create "{document.querySelector('input[aria-label="Command input"]')?.getAttribute('value')}"
+                            <CommandEmpty>
+                              <Button variant="ghost" className="w-full justify-start" onMouseDown={() => createTag(inputValue)}>
+                                  <Plus className="mr-2 h-4 w-4" /> Create "{inputValue}"
                               </Button>
                             </CommandEmpty>
                             <CommandGroup>
@@ -491,7 +496,10 @@ const TagManager = ({ selectedTagIds, onTagIdsChange }: { selectedTagIds: string
                                     <CommandItem
                                         key={tag.id}
                                         value={tag.id}
-                                        onSelect={() => toggleTag(tag.id)}
+                                        onSelect={() => {
+                                          toggleTag(tag.id);
+                                          setInputValue('');
+                                        }}
                                         className="flex justify-between items-center group"
                                     >
                                         <div className="flex items-center">
