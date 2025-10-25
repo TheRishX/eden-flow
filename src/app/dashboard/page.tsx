@@ -21,7 +21,7 @@ const migrateTodos = (todos: any[]): Todo[] => {
       dueDate: todo.dueDate,
       notes: todo.notes,
       subtasks: todo.subtasks || [],
-      tagIds: todo.tagIds || (todo.tags ? [] : undefined), // Basic migration from old tags
+      tagIds: todo.tagIds || [], // Ensure tagIds is always an array
     };
   });
 };
