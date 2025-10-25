@@ -77,10 +77,8 @@ export const TaskItem = ({
       <Checkbox
         id={`task-check-${task.id}`}
         checked={task.completed}
-        onCheckedChange={(e) => {
-          e.stopPropagation();
-          onToggle?.(task.id);
-        }}
+        onCheckedChange={() => onToggle?.(task.id)}
+        onClick={(e) => e.stopPropagation()}
         className="mt-1"
       />
       <div onClick={() => onTaskClick?.(task)} className="flex-grow cursor-pointer space-y-2">

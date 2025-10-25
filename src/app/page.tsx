@@ -5,7 +5,7 @@ import { Clock } from '@/components/zenith/Clock';
 import { Greeting } from '@/components/zenith/Greeting';
 import { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { BrainCircuit, RefreshCcw, Feather, ListTodo, Timer, Notebook, BookOpen, Terminal, Languages, BookCopy, LayoutDashboard, Leaf, Loader2 } from 'lucide-react';
+import { BrainCircuit, RefreshCcw, Feather, ListTodo, Timer, Notebook, BookOpen, Terminal, Languages, BookCopy, LayoutDashboard, Sun, Loader2 } from 'lucide-react';
 import { Focus } from '@/components/zenith/Focus';
 import { QuickLinksGrid } from '@/components/zenith/QuickLinksGrid';
 import { 
@@ -246,7 +246,7 @@ export default function ProvidenceTabPage() {
                                   <TooltipTrigger asChild>
                                     <Button variant="ghost" size="icon" className="h-6 w-6 hover:bg-white/10" asChild>
                                       <Link href="/greenday">
-                                        <Leaf className="w-4 h-4" />
+                                        <Sun className="w-4 h-4" />
                                         <span className="sr-only">GreenDay Planner</span>
                                       </Link>
                                     </Button>

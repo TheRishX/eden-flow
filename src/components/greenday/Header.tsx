@@ -1,7 +1,7 @@
 'use client';
 
 import { Button } from '@/components/ui/button';
-import { Leaf, PlusCircle, Wand2, ArrowLeft } from 'lucide-react';
+import { Sun, PlusCircle, Wand2, ArrowLeft } from 'lucide-react';
 import { format } from 'date-fns';
 import Link from 'next/link';
 
@@ -23,7 +23,7 @@ export function Header({ onAddActivity, onAISuggestions }: HeaderProps) {
             </Link>
           </Button>
           <div className="flex items-center gap-2 text-2xl font-bold text-primary">
-            <Leaf className="w-7 h-7" />
+            <Sun className="w-7 h-7" />
             <span>GreenDay</span>
           </div>
           <span className="hidden sm:block text-muted-foreground">{currentDate}</span>
