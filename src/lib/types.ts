@@ -6,6 +6,12 @@ export type Subtask = {
   completed: boolean;
 };
 
+export type Tag = {
+  id: string;
+  text: string;
+  color: string;
+};
+
 export type Todo = {
   id: string;
   text: string;
@@ -15,6 +21,7 @@ export type Todo = {
   dueDate?: string;
   notes?: string;
   subtasks?: Subtask[];
+  tags?: Tag[];
 };
 
 export type Activity = {

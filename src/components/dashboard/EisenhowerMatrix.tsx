@@ -2,7 +2,7 @@
 
 import React, { useState, useMemo } from 'react';
 import { createPortal } from 'react-dom';
-import type { Todo, Subtask } from '@/lib/types';
+import type { Todo, Subtask, Tag } from '@/lib/types';
 import {
   DndContext,
   DragOverlay,
@@ -26,14 +26,22 @@ import { TaskItem } from './TaskItem';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import { CalendarIcon, Plus, Trash2 } from 'lucide-react';
+import { CalendarIcon, Plus, Trash2, X } from 'lucide-react';
 import { Calendar } from '@/components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { format } from 'date-fns';
 import { Checkbox } from '@/components/ui/checkbox';
+import { Badge } from '@/components/ui/badge';
 
+const TAG_COLORS = [
+  'bg-red-200 text-red-800', 'bg-blue-200 text-blue-800', 'bg-green-200 text-green-800', 
+  'bg-yellow-200 text-yellow-800', 'bg-purple-200 text-purple-800', 'bg-pink-200 text-pink-800',
+  'bg-indigo-200 text-indigo-800', 'bg-teal-200 text-teal-800'
+];
+
+const getRandomColor = () => TAG_COLORS[Math.floor(Math.random() * TAG_COLORS.length)];
 
 export const quadrantConfigs = {
   do: {
@@ -277,6 +285,7 @@ export const EisenhowerMatrix = ({
 const TaskDetails = ({ task, onUpdate, onDelete, onClose }: { task: Todo; onUpdate: (task: Todo) => void; onDelete: () => void; onClose: () => void; }) => {
   const [localTask, setLocalTask] = useState<Todo>(task);
   const [newSubtask, setNewSubtask] = useState('');
+  const [newTag, setNewTag] = useState('');
 
   const handleFieldChange = (field: keyof Todo, value: any) => {
     const updated = { ...localTask, [field]: value };
@@ -302,6 +311,24 @@ const TaskDetails = ({ task, onUpdate, onDelete, onClose }: { task: Todo; onUpda
     const subtasks = (localTask.subtasks || []).filter(s => s.id !== subId);
     handleFieldChange('subtasks', subtasks);
   }
+  
+  const handleAddTag = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter' && newTag.trim()) {
+        e.preventDefault();
+        const tagExists = localTask.tags?.some(tag => tag.text.toLowerCase() === newTag.trim().toLowerCase());
+        if (!tagExists) {
+            const tag: Tag = { id: crypto.randomUUID(), text: newTag.trim(), color: getRandomColor() };
+            const tags = [...(localTask.tags || []), tag];
+            handleFieldChange('tags', tags);
+        }
+        setNewTag('');
+    }
+  }
+
+  const deleteTag = (tagId: string) => {
+    const tags = (localTask.tags || []).filter(tag => tag.id !== tagId);
+    handleFieldChange('tags', tags);
+  }
 
   return (
     <div className="py-4 grid gap-6">
@@ -317,6 +344,28 @@ const TaskDetails = ({ task, onUpdate, onDelete, onClose }: { task: Todo; onUpda
           value={localTask.text}
           onChange={e => handleFieldChange('text', e.target.value)}
           className="text-lg font-semibold border-0 shadow-none -ml-2"
+        />
+      </div>
+
+      {/* Tags */}
+      <div>
+        <Label>Tags</Label>
+        <div className="flex flex-wrap items-center gap-2 mt-2">
+            {(localTask.tags || []).map(tag => (
+                <Badge key={tag.id} variant="outline" className={cn("border-0", tag.color)}>
+                    {tag.text}
+                    <button onClick={() => deleteTag(tag.id)} className="ml-2 rounded-full hover:bg-black/10 p-0.5">
+                        <X className="w-3 h-3"/>
+                    </button>
+                </Badge>
+            ))}
+        </div>
+        <Input 
+            placeholder="Add a tag and press Enter..."
+            value={newTag}
+            onChange={(e) => setNewTag(e.target.value)}
+            onKeyDown={handleAddTag}
+            className="mt-2"
         />
       </div>
 

@@ -21,6 +21,7 @@ const migrateTodos = (todos: any[]): Todo[] => {
       dueDate: todo.dueDate,
       notes: todo.notes,
       subtasks: todo.subtasks || [],
+      tags: todo.tags || [],
     };
   });
 };
@@ -52,6 +53,7 @@ export default function DashboardPage() {
         urgency: 'not-urgent',
         importance: 'not-important',
         subtasks: [],
+        tags: [],
       };
       updateTodos([...todos, newTodo]);
       setNewTaskText('');
