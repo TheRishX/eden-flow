@@ -1,0 +1,34 @@
+{
+  "placeholderImages": [
+    {
+      "id": "zenith-background-1",
+      "description": "A beautiful, inspiring landscape at dawn.",
+      "imageUrl": "https://images.unsplash.com/photo-1470770841072-f978cf4d019e?q=80&w=1080",
+      "imageHint": "nature landscape"
+    },
+    {
+      "id": "zenith-background-2",
+      "description": "A tranquil forest scene with sunbeams.",
+      "imageUrl": "https://images.unsplash.com/photo-1448375240586-882707db888b?q=80&w=1080",
+      "imageHint": "forest sunbeams"
+    },
+    {
+      "id": "zenith-background-3",
+      "description": "A stunning mountain range at sunset.",
+      "imageUrl": "https://images.unsplash.com/photo-1480714378408-67cf0d13bc1b?q=80&w=1080",
+      "imageHint": "cityscape sunset"
+    },
+    {
+      "id": "zenith-background-4",
+      "description": "A serene beach with waves crashing.",
+      "imageUrl": "https://images.unsplash.com/photo-1507525428034-b723a996f3ea?q=80&w=1080",
+      "imageHint": "beach waves"
+    },
+    {
+      "id": "zenith-background-5",
+      "description": "A vibrant cityscape at night.",
+      "imageUrl": "https://images.unsplash.com/photo-1531213273763-d3b25d7c2378?q=80&w=1080",
+      "imageHint": "night city"
+    }
+  ]
+}

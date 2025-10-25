@@ -1,0 +1,217 @@
+{
+  "entities": {
+    "User": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "User",
+      "type": "object",
+      "description": "Represents a user of the FocusTab application.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the User entity."
+        },
+        "name": {
+          "type": "string",
+          "description": "User's name."
+        },
+        "email": {
+          "type": "string",
+          "description": "User's email address.",
+          "format": "email"
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "email"
+      ]
+    },
+    "Task": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Task",
+      "type": "object",
+      "description": "Represents a task in the user's to-do list.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the Task entity."
+        },
+        "userId": {
+          "type": "string",
+          "description": "Reference to User. (Relationship: User 1:N Task)"
+        },
+        "description": {
+          "type": "string",
+          "description": "Description of the task."
+        },
+        "isCompleted": {
+          "type": "boolean",
+          "description": "Indicates if the task is completed."
+        },
+        "scheduledTime": {
+          "type": "string",
+          "description": "The date and time when the task is scheduled.",
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "id",
+        "userId",
+        "description",
+        "isCompleted",
+        "scheduledTime"
+      ]
+    },
+    "QuickLink": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "QuickLink",
+      "type": "object",
+      "description": "Represents a quick link shortcut for a user.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the QuickLink entity."
+        },
+        "userId": {
+          "type": "string",
+          "description": "Reference to User. (Relationship: User 1:N QuickLink)"
+        },
+        "title": {
+          "type": "string",
+          "description": "Title of the quick link."
+        },
+        "url": {
+          "type": "string",
+          "description": "URL of the quick link.",
+          "format": "uri"
+        }
+      },
+      "required": [
+        "id",
+        "userId",
+        "title",
+        "url"
+      ]
+    },
+    "UserSettings": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "UserSettings",
+      "type": "object",
+      "description": "Represents user-specific settings and preferences.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the UserSettings entity."
+        },
+        "userId": {
+          "type": "string",
+          "description": "Reference to User. (Relationship: User 1:1 UserSettings)"
+        },
+        "dailyFocus": {
+          "type": "string",
+          "description": "User's main focus for the day."
+        },
+        "customAudioUrl": {
+          "type": "string",
+          "description": "URL of the user's custom uploaded audio file for notifications.",
+          "format": "uri"
+        },
+        "preSetTone": {
+          "type": "string",
+          "description": "The user selected preset notification sound"
+        }
+      },
+      "required": [
+        "id",
+        "userId"
+      ]
+    }
+  },
+  "auth": {
+    "providers": [
+      "password",
+      "anonymous"
+    ]
+  },
+  "firestore": {
+    "structure": [
+      {
+        "path": "/users/{userId}",
+        "definition": {
+          "entityName": "User",
+          "schema": {
+            "$ref": "#/backend/entities/User"
+          },
+          "description": "Stores user profile information. Contains basic user data.",
+          "params": [
+            {
+              "name": "userId",
+              "description": "The unique identifier for the user."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/users/{userId}/tasks/{taskId}",
+        "definition": {
+          "entityName": "Task",
+          "schema": {
+            "$ref": "#/backend/entities/Task"
+          },
+          "description": "Stores tasks associated with a specific user. Ownership is implicit via the path.",
+          "params": [
+            {
+              "name": "userId",
+              "description": "The unique identifier for the user."
+            },
+            {
+              "name": "taskId",
+              "description": "The unique identifier for the task."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/users/{userId}/quickLinks/{quickLinkId}",
+        "definition": {
+          "entityName": "QuickLink",
+          "schema": {
+            "$ref": "#/backend/entities/QuickLink"
+          },
+          "description": "Stores quick links associated with a specific user. Ownership is implicit via the path.",
+          "params": [
+            {
+              "name": "userId",
+              "description": "The unique identifier for the user."
+            },
+            {
+              "name": "quickLinkId",
+              "description": "The unique identifier for the quick link."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/users/{userId}/userSettings/{userSettingsId}",
+        "definition": {
+          "entityName": "UserSettings",
+          "schema": {
+            "$ref": "#/backend/entities/UserSettings"
+          },
+          "description": "Stores user settings associated with a specific user. Ownership is implicit via the path.",
+          "params": [
+            {
+              "name": "userId",
+              "description": "The unique identifier for the user."
+            },
+            {
+              "name": "userSettingsId",
+              "description": "The unique identifier for the user settings document."
+            }
+          ]
+        }
+      }
+    ],
+    "reasoning": "The Firestore structure is designed to ensure authorization independence, clarity, and scalability for the FocusTab application. User-owned data (Tasks, QuickLinks, and UserSettings) are stored in hierarchical paths under the `/users/{userId}` collection. This approach simplifies security rules by making ownership explicit in the path, avoiding the need for complex `get()` calls or custom claims.\n\nSpecifically, Tasks and QuickLinks are structured as subcollections under each user's document (`/users/{userId}/tasks/{taskId}` and `/users/{userId}/quickLinks/{quickLinkId}`). This directly encodes the user 1:N relationship between users and their tasks/quick links. The UserSettings document is stored under `/users/{userId}/userSettings/{userSettingsId}`, enforcing a 1:1 relationship.\n\nThis design supports the required QAPs (Rules are not Filters) by allowing secure list operations within each user's data. Security rules can easily verify that the `request.auth.uid` matches the `userId` in the path, ensuring that users can only access their own data. Denormalization isn't strictly required in this structure because ownership is directly encoded in the path. Therefore, authorization is independent and efficient."
+  }
+}
