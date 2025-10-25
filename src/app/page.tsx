@@ -243,6 +243,19 @@ export default function ProvidenceTabPage() {
                       <TooltipProvider>
                         <div className="flex items-center gap-4 text-sm bg-black/20 backdrop-blur-sm border border-white/10 p-2 rounded-lg">
                                 <Tooltip>
+                                   <TooltipTrigger asChild>
+                                    <Button variant="ghost" size="icon" className="h-6 w-6 hover:bg-white/10" asChild>
+                                      <Link href="/dashboard">
+                                        <LayoutDashboard className="w-4 h-4" />
+                                        <span className="sr-only">Dashboard</span>
+                                      </Link>
+                                    </Button>
+                                  </TooltipTrigger>
+                                  <TooltipContent className="bg-black/70 text-white border-white/10">
+                                    <p>Time Management Dashboard</p>
+                                  </TooltipContent>
+                                </Tooltip>
+                                <Tooltip>
                                   <TooltipTrigger asChild>
                                     <Button variant="ghost" size="icon" className="h-6 w-6 hover:bg-white/10" asChild>
                                       <Link href="/greenday">
@@ -253,19 +266,6 @@ export default function ProvidenceTabPage() {
                                   </TooltipTrigger>
                                   <TooltipContent className="bg-black/70 text-white border-white/10">
                                     <p>GreenDay Planner</p>
-                                  </TooltipContent>
-                                </Tooltip>
-                                <Tooltip>
-                                   <TooltipTrigger asChild>
-                                    <Button variant="ghost" size="icon" className="h-6 w-6 hover:bg-white/10" asChild>
-                                      <Link href="/dashboard">
-                                        <Timer className="w-4 h-4" />
-                                        <span className="sr-only">Dashboard</span>
-                                      </Link>
-                                    </Button>
-                                  </TooltipTrigger>
-                                  <TooltipContent className="bg-black/70 text-white border-white/10">
-                                    <p>Time Management Dashboard</p>
                                   </TooltipContent>
                                 </Tooltip>
                                 <Tasks />
