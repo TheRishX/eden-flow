@@ -19,7 +19,6 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
-  DialogFooter,
 } from '@/components/ui/dialog';
 import { QuadrantColumn } from './QuadrantColumn';
 import { TaskItem } from './TaskItem';
@@ -220,9 +219,10 @@ export const EisenhowerMatrix = ({
     onUpdateTodos(updatedTodos);
   };
 
-  const handleDeleteTask = () => {
-    if (selectedTask) {
-      onUpdateTodos(todos.filter(t => t.id !== selectedTask.id));
+  const handleDeleteTask = (taskId: string) => {
+    onUpdateTodos(todos.filter(t => t.id !== taskId));
+    // Also close the dialog if the deleted task was the selected one
+    if (selectedTask && selectedTask.id === taskId) {
       setSelectedTask(null);
     }
   };
@@ -252,6 +252,7 @@ export const EisenhowerMatrix = ({
                 tasks={categorizedTodos[quadrantId]}
                 onTaskClick={setSelectedTask}
                 onToggle={handleToggleTodo}
+                onDelete={handleDeleteTask}
                 />
             ))}
             </SortableContext>
@@ -274,7 +275,7 @@ export const EisenhowerMatrix = ({
             <TaskDetails
               task={selectedTask}
               onUpdate={handleTaskUpdate}
-              onDelete={handleDeleteTask}
+              onDelete={() => handleDeleteTask(selectedTask.id)}
               onClose={() => setSelectedTask(null)}
             />
           )}

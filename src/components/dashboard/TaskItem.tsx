@@ -9,11 +9,14 @@ import { cn } from '@/lib/utils';
 import type { Todo, Tag } from '@/lib/types';
 import { format } from 'date-fns';
 import { useLocalStorage } from '@/hooks/use-local-storage';
+import { Button } from '../ui/button';
+import { Trash2 } from 'lucide-react';
 
 interface TaskItemProps {
   task: Todo;
   onTaskClick?: (task: Todo) => void;
   onToggle?: (taskId: string) => void;
+  onDelete?: (taskId: string) => void;
   isOverlay?: boolean;
 }
 
@@ -21,6 +24,7 @@ export const TaskItem = ({
   task,
   onTaskClick,
   onToggle,
+  onDelete,
   isOverlay,
 }: TaskItemProps) => {
   const [allTags] = useLocalStorage<Tag[]>('edenflow-tags', []);
@@ -45,7 +49,7 @@ export const TaskItem = ({
     transform: CSS.Transform.toString(transform),
   };
 
-  const variants = cva('p-3 rounded-lg bg-card shadow-sm border mb-2 flex items-start gap-3', {
+  const variants = cva('p-3 rounded-lg bg-card shadow-sm border mb-2 flex items-start gap-3 group', {
     variants: {
       dragging: {
         over: 'ring-2 opacity-30 ring-primary',
@@ -73,7 +77,10 @@ export const TaskItem = ({
       <Checkbox
         id={`task-check-${task.id}`}
         checked={task.completed}
-        onCheckedChange={() => onToggle?.(task.id)}
+        onCheckedChange={(e) => {
+          e.stopPropagation();
+          onToggle?.(task.id);
+        }}
         className="mt-1"
       />
       <div onClick={() => onTaskClick?.(task)} className="flex-grow cursor-pointer space-y-2">
@@ -101,6 +108,18 @@ export const TaskItem = ({
           </p>
         )}
       </div>
+      <Button
+        variant="ghost"
+        size="icon"
+        onClick={(e) => {
+            e.stopPropagation();
+            onDelete?.(task.id);
+        }}
+        className="h-7 w-7 opacity-0 group-hover:opacity-100 shrink-0"
+      >
+        <Trash2 className="h-4 w-4" />
+        <span className="sr-only">Delete task</span>
+      </Button>
     </div>
   );
 };

@@ -19,6 +19,7 @@ interface QuadrantColumnProps {
   tasks: Todo[];
   onTaskClick: (task: Todo) => void;
   onToggle: (taskId: string) => void;
+  onDelete: (taskId: string) => void;
 }
 
 export const QuadrantColumn = ({
@@ -26,6 +27,7 @@ export const QuadrantColumn = ({
   tasks,
   onTaskClick,
   onToggle,
+  onDelete,
 }: QuadrantColumnProps) => {
   const tasksIds = useMemo(() => {
     return tasks.map(task => task.id);
@@ -56,6 +58,7 @@ export const QuadrantColumn = ({
                 task={task}
                 onTaskClick={onTaskClick}
                 onToggle={onToggle}
+                onDelete={onDelete}
               />
             ))}
           </SortableContext>
