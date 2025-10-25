@@ -3,6 +3,7 @@ import './globals.css';
 import { Toaster } from "@/components/ui/toaster"
 import { FirebaseTaskNotificationManager } from '@/components/FirebaseTaskNotificationManager';
 import { FirebaseClientProvider } from '@/firebase';
+import { GlobalKeyListener } from '@/components/GlobalKeyListener';
 
 export const metadata: Metadata = {
   title: 'EdenFlow',
@@ -24,6 +25,7 @@ export default function RootLayout({
       </head>
       <body className="font-body antialiased">
         <FirebaseClientProvider>
+          <GlobalKeyListener />
           {children}
           <Toaster />
           <FirebaseTaskNotificationManager />
