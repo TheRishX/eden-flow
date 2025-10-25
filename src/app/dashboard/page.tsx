@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import type { Todo } from '@/lib/types';
 import Link from 'next/link';
-import { ArrowLeft } from 'lucide-react';
+import { LayoutDashboard } from 'lucide-react';
 import { EisenhowerMatrix } from '@/components/dashboard/EisenhowerMatrix';
 
 // Simple migration function to ensure all tasks have the new properties
@@ -19,6 +19,7 @@ const migrateTodos = (todos: any[]): Todo[] => {
       urgency: todo.urgency || 'not-urgent',
       importance: todo.importance || 'not-important',
       dueDate: todo.dueDate,
+      dueTime: todo.dueTime,
       notes: todo.notes,
       subtasks: todo.subtasks || [],
       tagIds: todo.tagIds || [], // Ensure tagIds is always an array
@@ -66,7 +67,7 @@ export default function DashboardPage() {
         <div className="flex items-center gap-4">
           <Button variant="outline" size="icon" asChild>
             <Link href="/">
-              <ArrowLeft />
+              <LayoutDashboard />
             </Link>
           </Button>
           <h1 className="text-2xl font-bold">Kairos Dashboard</h1>

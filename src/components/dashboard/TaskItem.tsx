@@ -48,6 +48,23 @@ export const TaskItem = ({
     transition,
     transform: CSS.Transform.toString(transform),
   };
+  
+  const isOverdue = useMemo(() => {
+    if (task.completed || !task.dueDate) return false;
+    const now = new Date();
+    const dueDate = new Date(task.dueDate);
+    
+    if (task.dueTime) {
+      const [hours, minutes] = task.dueTime.split(':').map(Number);
+      dueDate.setHours(hours, minutes, 0, 0);
+    } else {
+      // If no time is set, consider it due at the end of the day
+      dueDate.setHours(23, 59, 59, 999);
+    }
+    
+    return now > dueDate;
+  }, [task.dueDate, task.dueTime, task.completed]);
+
 
   const variants = cva('p-3 rounded-lg bg-card shadow-sm border mb-2 flex items-start gap-3 group', {
     variants: {
@@ -55,6 +72,9 @@ export const TaskItem = ({
         over: 'ring-2 opacity-30 ring-primary',
         overlay: 'ring-2 ring-primary',
       },
+      state: {
+          overdue: 'border-destructive bg-destructive/10',
+      }
     },
   });
 
@@ -71,6 +91,7 @@ export const TaskItem = ({
       className={cn(
           variants({
             dragging: isOverlay ? 'overlay' : isDragging ? 'over' : undefined,
+            state: isOverdue ? 'overdue' : undefined,
           }),
       )}
     >
@@ -101,8 +122,12 @@ export const TaskItem = ({
         </div>
 
         {task.dueDate && (
-          <p className="mt-1 text-xs text-muted-foreground">
-            Due: {format(new Date(task.dueDate), 'MMM dd')}
+          <p className={cn(
+              "mt-1 text-xs text-muted-foreground",
+              isOverdue && "font-semibold text-destructive"
+            )}
+          >
+            Due: {format(new Date(task.dueDate), 'MMM dd')} {task.dueTime && `at ${task.dueTime}`}
           </p>
         )}
       </div>

@@ -342,33 +342,45 @@ const TaskDetails = ({ task, onUpdate, onDelete, onClose }: { task: Todo; onUpda
         />
       </div>
 
-
-      {/* Due Date */}
-      <div>
-        <Label htmlFor="dueDate">Due Date</Label>
-        <Popover>
-          <PopoverTrigger asChild>
-            <Button
-              variant={"outline"}
-              className={cn(
-                "w-full justify-start text-left font-normal",
-                !localTask.dueDate && "text-muted-foreground"
-              )}
-            >
-              <CalendarIcon className="mr-2 h-4 w-4" />
-              {localTask.dueDate ? format(new Date(localTask.dueDate), "PPP") : <span>Pick a date</span>}
-            </Button>
-          </PopoverTrigger>
-          <PopoverContent className="w-auto p-0">
-            <Calendar
-              mode="single"
-              selected={localTask.dueDate ? new Date(localTask.dueDate) : undefined}
-              onSelect={(date) => handleFieldChange('dueDate', date?.toISOString())}
-              initialFocus
+      {/* Due Date & Time */}
+      <div className="grid grid-cols-2 gap-4">
+        <div>
+          <Label htmlFor="dueDate">Due Date</Label>
+          <Popover>
+            <PopoverTrigger asChild>
+              <Button
+                variant={"outline"}
+                className={cn(
+                  "w-full justify-start text-left font-normal",
+                  !localTask.dueDate && "text-muted-foreground"
+                )}
+              >
+                <CalendarIcon className="mr-2 h-4 w-4" />
+                {localTask.dueDate ? format(new Date(localTask.dueDate), "PPP") : <span>Pick a date</span>}
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-auto p-0">
+              <Calendar
+                mode="single"
+                selected={localTask.dueDate ? new Date(localTask.dueDate) : undefined}
+                onSelect={(date) => handleFieldChange('dueDate', date?.toISOString())}
+                initialFocus
+              />
+            </PopoverContent>
+          </Popover>
+        </div>
+         <div>
+          <Label htmlFor="dueTime">Due Time</Label>
+          <Input
+              id="dueTime"
+              type="time"
+              value={localTask.dueTime || ''}
+              onChange={(e) => handleFieldChange('dueTime', e.target.value)}
+              className="w-full"
             />
-          </PopoverContent>
-        </Popover>
+        </div>
       </div>
+
 
       {/* Notes */}
       <div>

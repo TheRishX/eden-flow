@@ -18,7 +18,8 @@ export type Todo = {
   completed: boolean;
   urgency?: 'urgent' | 'not-urgent';
   importance?: 'important' | 'not-important';
-  dueDate?: string;
+  dueDate?: string; // ISO string for date
+  dueTime?: string; // "HH:mm" format for time
   notes?: string;
   subtasks?: Subtask[];
   tagIds?: string[];

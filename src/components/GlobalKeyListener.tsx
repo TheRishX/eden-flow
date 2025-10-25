@@ -5,13 +5,24 @@ import { useRouter } from 'next/navigation';
 
 /**
  * A client component that listens for the 'Escape' key press
- * and navigates the user back to the homepage.
+ * and navigates the user back to the homepage, unless an input field is focused.
  */
 export function GlobalKeyListener() {
   const router = useRouter();
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
+      const target = event.target as HTMLElement;
+
+      // Do not navigate if the user is typing in an input, textarea, or contenteditable element
+      if (
+        target.tagName === 'INPUT' ||
+        target.tagName === 'TEXTAREA' ||
+        target.isContentEditable
+      ) {
+        return;
+      }
+
       if (event.key === 'Escape') {
         // Prevent default browser behavior for the Escape key (e.g., exiting fullscreen)
         event.preventDefault();
