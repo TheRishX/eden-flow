@@ -17,6 +17,7 @@ import { SortableContext, arrayMove } from '@dnd-kit/sortable';
 import {
   Dialog,
   DialogContent,
+  DialogFooter,
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
