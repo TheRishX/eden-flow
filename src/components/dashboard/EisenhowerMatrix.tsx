@@ -19,14 +19,13 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
-  DialogFooter,
 } from '@/components/ui/dialog';
 import { QuadrantColumn } from './QuadrantColumn';
 import { TaskItem } from './TaskItem';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import { CalendarIcon, Plus, Trash2, X } from 'lucide-react';
+import { CalendarIcon, CheckIcon, ChevronsUpDown, Plus, Circle, Trash2, X } from 'lucide-react';
 import { Calendar } from '@/components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Button } from '@/components/ui/button';
@@ -34,14 +33,9 @@ import { cn } from '@/lib/utils';
 import { format } from 'date-fns';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Badge } from '@/components/ui/badge';
+import { useLocalStorage } from '@/hooks/use-local-storage';
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '@/components/ui/command';
 
-const TAG_COLORS = [
-  'bg-red-200 text-red-800', 'bg-blue-200 text-blue-800', 'bg-green-200 text-green-800', 
-  'bg-yellow-200 text-yellow-800', 'bg-purple-200 text-purple-800', 'bg-pink-200 text-pink-800',
-  'bg-indigo-200 text-indigo-800', 'bg-teal-200 text-teal-800'
-];
-
-const getRandomColor = () => TAG_COLORS[Math.floor(Math.random() * TAG_COLORS.length)];
 
 export const quadrantConfigs = {
   do: {
@@ -167,7 +161,6 @@ export const EisenhowerMatrix = ({
     }
 
     const activeIndex = categorizedTodos[activeQuadrant].findIndex(t => t.id === activeId);
-    const overIndex = isOverATask ? categorizedTodos[overQuadrant].findIndex(t => t.id === overId) : 0;
     
     let newTodos = Array.from(todos);
     const [movedTask] = newTodos.splice(newTodos.findIndex(t => t.id === activeId), 1);
@@ -177,6 +170,8 @@ export const EisenhowerMatrix = ({
     movedTask.importance = newQuadrantConfig.importance as 'important' | 'not-important';
     
     const allCategorized = getCategorizedTodos(newTodos);
+    const overIndex = isOverATask ? allCategorized[overQuadrant].findIndex(t => t.id === overId) : allCategorized[overQuadrant].length;
+    
     allCategorized[overQuadrant].splice(overIndex, 0, movedTask);
 
     onUpdateTodos(Object.values(allCategorized).flat());
@@ -192,21 +187,28 @@ export const EisenhowerMatrix = ({
     const activeId = active.id as string;
     const overId = over.id as string;
 
+    if (activeId === overId) {
+      setActiveTodo(null);
+      return;
+    }
+
     const activeQuadrant = findQuadrant(activeId);
     const overQuadrant = findQuadrant(overId) || overId as QuadrantId;
 
     if (!activeQuadrant || !overQuadrant || activeQuadrant !== overQuadrant) {
+        // This case is handled by onDragOver for moves between columns
         setActiveTodo(null);
         return;
     }
 
+    // This handles reordering within the same column
     const activeIndex = categorizedTodos[activeQuadrant].findIndex(t => t.id === activeId);
     const overIndex = categorizedTodos[overQuadrant].findIndex(t => t.id === overId);
     
     if (activeIndex !== overIndex) {
         const newQuadrantTasks = arrayMove(categorizedTodos[activeQuadrant], activeIndex, overIndex);
-        const newTodos = todos.filter(t => getQuadrant(t) !== activeQuadrant);
-        onUpdateTodos([...newTodos, ...newQuadrantTasks]);
+        const otherTasks = todos.filter(t => getQuadrant(t) !== activeQuadrant);
+        onUpdateTodos([...otherTasks, ...newQuadrantTasks]);
     }
     
     setActiveTodo(null);
@@ -285,7 +287,6 @@ export const EisenhowerMatrix = ({
 const TaskDetails = ({ task, onUpdate, onDelete, onClose }: { task: Todo; onUpdate: (task: Todo) => void; onDelete: () => void; onClose: () => void; }) => {
   const [localTask, setLocalTask] = useState<Todo>(task);
   const [newSubtask, setNewSubtask] = useState('');
-  const [newTag, setNewTag] = useState('');
 
   const handleFieldChange = (field: keyof Todo, value: any) => {
     const updated = { ...localTask, [field]: value };
@@ -312,24 +313,6 @@ const TaskDetails = ({ task, onUpdate, onDelete, onClose }: { task: Todo; onUpda
     handleFieldChange('subtasks', subtasks);
   }
   
-  const handleAddTag = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === 'Enter' && newTag.trim()) {
-        e.preventDefault();
-        const tagExists = localTask.tags?.some(tag => tag.text.toLowerCase() === newTag.trim().toLowerCase());
-        if (!tagExists) {
-            const tag: Tag = { id: crypto.randomUUID(), text: newTag.trim(), color: getRandomColor() };
-            const tags = [...(localTask.tags || []), tag];
-            handleFieldChange('tags', tags);
-        }
-        setNewTag('');
-    }
-  }
-
-  const deleteTag = (tagId: string) => {
-    const tags = (localTask.tags || []).filter(tag => tag.id !== tagId);
-    handleFieldChange('tags', tags);
-  }
-
   return (
     <div className="py-4 grid gap-6">
       {/* Title and Completion */}
@@ -350,24 +333,12 @@ const TaskDetails = ({ task, onUpdate, onDelete, onClose }: { task: Todo; onUpda
       {/* Tags */}
       <div>
         <Label>Tags</Label>
-        <div className="flex flex-wrap items-center gap-2 mt-2">
-            {(localTask.tags || []).map(tag => (
-                <Badge key={tag.id} variant="outline" className={cn("border-0", tag.color)}>
-                    {tag.text}
-                    <button onClick={() => deleteTag(tag.id)} className="ml-2 rounded-full hover:bg-black/10 p-0.5">
-                        <X className="w-3 h-3"/>
-                    </button>
-                </Badge>
-            ))}
-        </div>
-        <Input 
-            placeholder="Add a tag and press Enter..."
-            value={newTag}
-            onChange={(e) => setNewTag(e.target.value)}
-            onKeyDown={handleAddTag}
-            className="mt-2"
+        <TagManager
+            selectedTagIds={localTask.tagIds || []}
+            onTagIdsChange={(newTagIds) => handleFieldChange('tagIds', newTagIds)}
         />
       </div>
+
 
       {/* Due Date */}
       <div>
@@ -437,10 +408,142 @@ const TaskDetails = ({ task, onUpdate, onDelete, onClose }: { task: Todo; onUpda
         </div>
       </div>
 
-      <DialogFooter className="sm:justify-between mt-4">
+      <div className="sm:justify-between mt-4 flex justify-between">
         <Button variant="destructive" onClick={onDelete}>Delete Task</Button>
         <Button onClick={onClose}>Close</Button>
-      </DialogFooter>
+      </div>
     </div>
   );
+};
+
+const TAG_COLORS = [
+  '#ef4444', '#f97316', '#eab308', '#84cc16', '#22c55e', '#14b8a6',
+  '#06b6d4', '#3b82f6', '#8b5cf6', '#d946ef', '#ec4899'
+];
+
+const TagManager = ({ selectedTagIds, onTagIdsChange }: { selectedTagIds: string[], onTagIdsChange: (ids: string[]) => void }) => {
+    const [allTags, setAllTags] = useLocalStorage<Tag[]>('edenflow-tags', []);
+    const [open, setOpen] = useState(false);
+
+    const toggleTag = (tagId: string) => {
+        const newTagIds = selectedTagIds.includes(tagId)
+            ? selectedTagIds.filter(id => id !== tagId)
+            : [...selectedTagIds, tagId];
+        onTagIdsChange(newTagIds);
+    };
+
+    const createTag = (text: string) => {
+        const newTag: Tag = {
+            id: crypto.randomUUID(),
+            text,
+            color: TAG_COLORS[Math.floor(Math.random() * TAG_COLORS.length)]
+        };
+        setAllTags(prev => [...prev, newTag]);
+        toggleTag(newTag.id);
+    };
+
+    const updateTagColor = (tagId: string, color: string) => {
+        setAllTags(allTags.map(t => t.id === tagId ? { ...t, color } : t));
+    };
+
+    const selectedTags = useMemo(() => {
+        return allTags.filter(tag => selectedTagIds.includes(tag.id));
+    }, [allTags, selectedTagIds]);
+
+    return (
+        <div className="space-y-2">
+            <Popover open={open} onOpenChange={setOpen}>
+                <PopoverTrigger asChild>
+                    <Button
+                        variant="outline"
+                        role="combobox"
+                        aria-expanded={open}
+                        className="w-full justify-between"
+                    >
+                        <span className="truncate">
+                            {selectedTags.length > 0 ? selectedTags.map(t => t.text).join(', ') : "Select tags..."}
+                        </span>
+                        <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                    </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-[--radix-popover-trigger-width] p-0">
+                    <Command
+                      filter={(value, search) => {
+                        const tag = allTags.find(t => t.id === value);
+                        if(tag?.text.toLowerCase().includes(search.toLowerCase())) return 1;
+                        return 0;
+                      }}
+                    >
+                        <CommandInput placeholder="Search or create tag..." />
+                        <CommandList>
+                            <CommandEmpty onSelect={() => {
+                                const input = document.querySelector('input[aria-label="Command input"]');
+                                if (input instanceof HTMLInputElement) {
+                                    createTag(input.value);
+                                }
+                            }}>
+                              <Button variant="ghost" className="w-full justify-start">
+                                  <Plus className="mr-2 h-4 w-4" /> Create "{document.querySelector('input[aria-label="Command input"]')?.getAttribute('value')}"
+                              </Button>
+                            </CommandEmpty>
+                            <CommandGroup>
+                                {allTags.map((tag) => (
+                                    <CommandItem
+                                        key={tag.id}
+                                        value={tag.id}
+                                        onSelect={() => toggleTag(tag.id)}
+                                        className="flex justify-between items-center group"
+                                    >
+                                        <div className="flex items-center">
+                                            <CheckIcon
+                                                className={cn(
+                                                    "mr-2 h-4 w-4",
+                                                    selectedTagIds.includes(tag.id) ? "opacity-100" : "opacity-0"
+                                                )}
+                                            />
+                                            <Circle className="mr-2 h-4 w-4" style={{ color: tag.color, fill: tag.color }} />
+                                            {tag.text}
+                                        </div>
+                                        <Popover>
+                                            <PopoverTrigger asChild onClick={(e) => e.stopPropagation()}>
+                                                <Button variant="ghost" size="icon" className="h-6 w-6 opacity-0 group-hover:opacity-100">
+                                                    <Pencil className="h-3 w-3" />
+                                                </Button>
+                                            </PopoverTrigger>
+                                            <PopoverContent className="w-auto p-1 border-none" onClick={(e) => e.stopPropagation()}>
+                                                <div className="flex gap-1">
+                                                    {TAG_COLORS.map(color => (
+                                                        <Button
+                                                            key={color}
+                                                            variant="ghost"
+                                                            size="icon"
+                                                            className="h-6 w-6 rounded-full"
+                                                            style={{ backgroundColor: color }}
+                                                            onClick={() => updateTagColor(tag.id, color)}
+                                                        >
+                                                          {tag.color === color && <CheckIcon className="h-4 w-4 text-white" />}
+                                                        </Button>
+                                                    ))}
+                                                </div>
+                                            </PopoverContent>
+                                        </Popover>
+                                    </CommandItem>
+                                ))}
+                            </CommandGroup>
+                        </CommandList>
+                    </Command>
+                </PopoverContent>
+            </Popover>
+            <div className="flex flex-wrap items-center gap-2 mt-2 min-h-[2rem]">
+                {selectedTags.map(tag => (
+                    <Badge key={tag.id} variant="outline" style={{ backgroundColor: `${tag.color}20`, borderColor: tag.color, color: tag.color }} className="font-medium">
+                        {tag.text}
+                        <button onClick={() => toggleTag(tag.id)} className="ml-2 rounded-full hover:bg-black/10 p-0.5">
+                            <X className="w-3 h-3"/>
+                        </button>
+                    </Badge>
+                ))}
+            </div>
+        </div>
+    );
 };

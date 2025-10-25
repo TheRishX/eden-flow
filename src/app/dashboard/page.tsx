@@ -21,7 +21,7 @@ const migrateTodos = (todos: any[]): Todo[] => {
       dueDate: todo.dueDate,
       notes: todo.notes,
       subtasks: todo.subtasks || [],
-      tags: todo.tags || [],
+      tagIds: todo.tagIds || (todo.tags ? [] : undefined), // Basic migration from old tags
     };
   });
 };
@@ -53,7 +53,7 @@ export default function DashboardPage() {
         urgency: 'not-urgent',
         importance: 'not-important',
         subtasks: [],
-        tags: [],
+        tagIds: [],
       };
       updateTodos([...todos, newTodo]);
       setNewTaskText('');

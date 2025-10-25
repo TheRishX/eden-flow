@@ -2,13 +2,13 @@
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { cva } from 'class-variance-authority';
-import React from 'react';
+import React, { useMemo } from 'react';
 
 import { Checkbox } from '@/components/ui/checkbox';
 import { cn } from '@/lib/utils';
-import type { Todo } from '@/lib/types';
+import type { Todo, Tag } from '@/lib/types';
 import { format } from 'date-fns';
-import { Badge } from '../ui/badge';
+import { useLocalStorage } from '@/hooks/use-local-storage';
 
 interface TaskItemProps {
   task: Todo;
@@ -23,6 +23,8 @@ export const TaskItem = ({
   onToggle,
   isOverlay,
 }: TaskItemProps) => {
+  const [allTags] = useLocalStorage<Tag[]>('edenflow-tags', []);
+
   const {
     attributes,
     listeners,
@@ -51,6 +53,10 @@ export const TaskItem = ({
       },
     },
   });
+
+  const taskTags = useMemo(() => {
+    return (task.tagIds || []).map(tagId => allTags.find(t => t.id === tagId)).filter(Boolean) as Tag[];
+  }, [task.tagIds, allTags]);
 
   return (
     <div
@@ -82,8 +88,8 @@ export const TaskItem = ({
         </label>
         
         <div className="flex flex-wrap items-center gap-1">
-          {(task.tags || []).map(tag => (
-            <div key={tag.id} className={cn("px-1.5 py-0.5 text-xs rounded-full", tag.color)}>
+          {taskTags.map(tag => (
+            <div key={tag.id} className={cn("px-1.5 py-0.5 text-xs rounded-full")} style={{ backgroundColor: `${tag.color}20`, color: tag.color }}>
               {tag.text}
             </div>
           ))}

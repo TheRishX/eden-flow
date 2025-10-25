@@ -21,7 +21,7 @@ export type Todo = {
   dueDate?: string;
   notes?: string;
   subtasks?: Subtask[];
-  tags?: Tag[];
+  tagIds?: string[];
 };
 
 export type Activity = {
