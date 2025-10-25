@@ -49,6 +49,7 @@ export function FirebaseTaskNotificationManager() {
           if (Notification.permission === 'granted') {
              console.log('Notification permission already granted.');
              setShowPermissionRequest(false);
+             // VAPID key is your public key for push notifications
              const currentToken = await getToken(messaging, { vapidKey: 'BNRaLkyj1zJ-Gjt78NKuUFreABo4xLobraOMrWXTKq5QwjXB5sTiK4jBOhbKHu935RWFo6aQvg9IEdowb9YuwWQ' });
              if (currentToken) {
                console.log('FCM Token:', currentToken);

@@ -1,7 +1,8 @@
-// This file must be in the public directory.
+// This file must be in the public directory
 
-importScripts('https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js');
-importScripts('https://www.gstatic.com/firebasejs/10.12.2/firebase-messaging-compat.js');
+// Scripts for firebase and firebase messaging
+importScripts('https://www.gstatic.com/firebasejs/10.9.0/firebase-app-compat.js');
+importScripts('https://www.gstatic.com/firebasejs/10.9.0/firebase-messaging-compat.js');
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
@@ -11,13 +12,12 @@ const firebaseConfig = {
   storageBucket: "edenflow-v2-08661726-3d147.appspot.com",
   messagingSenderId: "1074368157477",
   appId: "1:1074368157477:web:65fd136f1bc6c8ec01eccc",
-  measurementId: "G-XXXXXXXXXX"
 };
 
 
 // Initialize Firebase
 if (!firebase.apps.length) {
-    firebase.initializeApp(firebaseConfig);
+  firebase.initializeApp(firebaseConfig);
 }
 
 const messaging = firebase.messaging();
@@ -28,7 +28,7 @@ messaging.onBackgroundMessage((payload) => {
   const notificationTitle = payload.notification.title;
   const notificationOptions = {
     body: payload.notification.body,
-    icon: '/icon-192x192.png' // Make sure you have an icon in your public folder
+    icon: '/icon-192x192.png' 
   };
 
   self.registration.showNotification(notificationTitle, notificationOptions);
