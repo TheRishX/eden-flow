@@ -34,7 +34,7 @@ export function Clock() {
       <p className="opacity-80 text-lg pt-8">{dateString}</p>
       <h1 className="text-7xl md:text-8xl font-bold font-headline tracking-tighter">
         {mainTime}
-        <span className="text-2xl md:text-3xl font-normal align-top opacity-70 ml-2 tracking-wider">{ampm.toUpperCase()}</span>
+        <span className="text-2xl md:text-3xl font-normal align-top opacity-70 ml-2 tracking-wide">{ampm.toUpperCase()}</span>
       </h1>
     </div>
   );
