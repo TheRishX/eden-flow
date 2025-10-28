@@ -15,9 +15,8 @@ export function Clock() {
 
   if (!time) {
     return (
-      <div className="text-center pt-8">
-         <div className="h-8" />
-         <h1 className="text-6xl md:text-7xl font-bold font-headline tracking-tighter">&nbsp;</h1>
+      <div className="text-center">
+         <div className="h-[4.5rem]" />
       </div>
     );
   }
@@ -31,11 +30,11 @@ export function Clock() {
   const ampm = timeParts[1];
 
   return (
-    <div className="text-white text-center pt-8 space-y-4">
+    <div className="text-white text-center space-y-4">
       <p className="opacity-80 text-lg">{dateString}</p>
-      <h1 className="text-6xl md:text-7xl font-bold font-headline tracking-tighter">
+      <h1 className="text-7xl md:text-8xl font-bold font-headline tracking-tighter">
         {mainTime}
-        <span className="text-5xl md:text-6xl opacity-70 ml-2">{ampm}</span>
+        <span className="text-2xl md:text-3xl font-normal align-top opacity-70 ml-2">{ampm.toUpperCase()}</span>
       </h1>
     </div>
   );
