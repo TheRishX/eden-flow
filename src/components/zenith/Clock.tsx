@@ -15,7 +15,7 @@ export function Clock() {
 
   if (!time) {
     return (
-      <div className="text-center">
+      <div className="text-center pt-4">
          <p className="opacity-80 text-lg">&nbsp;</p>
          <h1 className="text-7xl md:text-8xl font-bold font-headline tracking-tighter">&nbsp;</h1>
       </div>
@@ -26,9 +26,9 @@ export function Clock() {
   const dateString = time.toLocaleDateString([], { weekday: 'long', day: 'numeric', month: 'long' });
 
   return (
-    <div className="text-white text-center">
+    <div className="text-white text-center pt-4">
       <p className="opacity-80 text-lg">{dateString}</p>
-      <h1 className="text-7xl md:text-8xl font-bold font-headline tracking-tighter">
+      <h1 className="text-6xl md:text-7xl font-bold font-headline tracking-tighter">
         {timeString}
       </h1>
     </div>
