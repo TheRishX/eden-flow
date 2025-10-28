@@ -22,15 +22,19 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Button } from '@/components/ui/button';
 import { GripVertical, Trash2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
+import { format, parse } from 'date-fns';
 
-interface ActivityListProps {
-  activities: Activity[];
-  setActivities: (activities: Activity[]) => void;
-  onToggle: (id: string) => void;
-  onDelete: (id: string) => void;
-  onEdit: (activity: Activity) => void;
+
+function formatTime12h(time24: string) {
+    try {
+        const date = parse(time24, 'HH:mm', new Date());
+        return format(date, 'p'); // e.g., 1:00 PM
+    } catch (e) {
+        return time24; // Fallback
+    }
 }
+
 
 function SortableActivityItem({ activity, onToggle, onDelete, onEdit }: { activity: Activity, onToggle: (id: string) => void, onDelete: (id: string) => void, onEdit: (activity: Activity) => void }) {
   const {
@@ -47,6 +51,9 @@ function SortableActivityItem({ activity, onToggle, onDelete, onEdit }: { activi
     transition,
     zIndex: isDragging ? 10 : 'auto',
   };
+  
+  const startTime12h = useMemo(() => formatTime12h(activity.startTime), [activity.startTime]);
+  const endTime12h = useMemo(() => formatTime12h(activity.endTime), [activity.endTime]);
 
   return (
     <div
@@ -72,7 +79,7 @@ function SortableActivityItem({ activity, onToggle, onDelete, onEdit }: { activi
           {activity.title}
         </p>
         <p className="text-sm text-muted-foreground">
-          {activity.startTime} - {activity.endTime}
+          {startTime12h} - {endTime12h}
         </p>
       </div>
       <Button variant="ghost" size="icon" onClick={() => onDelete(activity.id)} className="text-muted-foreground hover:text-destructive">

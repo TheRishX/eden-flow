@@ -7,7 +7,7 @@ import React, { useMemo } from 'react';
 import { Checkbox } from '@/components/ui/checkbox';
 import { cn } from '@/lib/utils';
 import type { Todo, Tag } from '@/lib/types';
-import { format } from 'date-fns';
+import { format, parse } from 'date-fns';
 import { useLocalStorage } from '@/hooks/use-local-storage';
 import { Button } from '../ui/button';
 import { Trash2 } from 'lucide-react';
@@ -82,6 +82,16 @@ export const TaskItem = ({
     return (task.tagIds || []).map(tagId => allTags.find(t => t.id === tagId)).filter(Boolean) as Tag[];
   }, [task.tagIds, allTags]);
 
+  const formattedTime = useMemo(() => {
+    if (!task.dueTime) return '';
+    try {
+        const time = parse(task.dueTime, 'HH:mm', new Date());
+        return format(time, 'p'); // 'p' is for localized time, e.g., 1:00 PM
+    } catch (e) {
+        return task.dueTime; // fallback
+    }
+  }, [task.dueTime]);
+
   return (
     <div
       ref={setNodeRef}
@@ -127,7 +137,7 @@ export const TaskItem = ({
               isOverdue && "font-semibold text-destructive"
             )}
           >
-            Due: {format(new Date(task.dueDate), 'MMM dd')} {task.dueTime && `at ${task.dueTime}`}
+            Due: {format(new Date(task.dueDate), 'MMM dd')} {formattedTime && `at ${formattedTime}`}
           </p>
         )}
       </div>

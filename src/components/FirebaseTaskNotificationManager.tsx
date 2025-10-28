@@ -14,7 +14,7 @@ import {
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
 import type { Activity } from '@/lib/types';
-import { format } from 'date-fns';
+import { format, parse } from 'date-fns';
 import { BellRing, Check } from 'lucide-react';
 import { useFirebaseApp } from '@/firebase/provider';
 import { Button } from './ui/button';
@@ -162,6 +162,8 @@ export function FirebaseTaskNotificationManager() {
     }
   };
 
+  const formattedTime = dueTask ? format(parse(dueTask.startTime, 'HH:mm', new Date()), 'p') : '';
+
   return (
     <>
       {showPermissionRequest && (
@@ -184,7 +186,7 @@ export function FirebaseTaskNotificationManager() {
             <AlertDialogDescription className="text-destructive-foreground/80 pt-4 text-lg">
               It's time for your scheduled activity:
               <p className="font-bold text-2xl text-white mt-2">"{dueTask?.title}"</p>
-              <p className="mt-2 text-base">Scheduled for {dueTask?.startTime}</p>
+              <p className="mt-2 text-base">Scheduled for {formattedTime}</p>
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
