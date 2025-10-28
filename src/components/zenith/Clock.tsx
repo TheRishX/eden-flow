@@ -15,9 +15,9 @@ export function Clock() {
 
   if (!time) {
     return (
-      <div>
+      <div className="text-center">
          <p className="opacity-80 text-lg">&nbsp;</p>
-         <h1 className="text-7xl md:text-8xl font-bold font-headline tracking-tighter -ml-1">&nbsp;</h1>
+         <h1 className="text-8xl md:text-9xl font-bold font-headline tracking-tighter">&nbsp;</h1>
       </div>
     );
   }
@@ -26,13 +26,10 @@ export function Clock() {
   const dateString = time.toLocaleDateString([], { weekday: 'long', day: 'numeric', month: 'long' });
 
   return (
-    <div className="text-white">
+    <div className="text-white text-center">
       <p className="opacity-80 text-lg">{dateString}</p>
-      <h1 className="text-7xl md:text-8xl font-bold font-headline tracking-tighter -ml-1">
-        {timeString.replace(' AM', '').replace(' PM', '')}
-        <span className="text-5xl md:text-6xl align-top text-white/80 ml-2">
-            {time.getHours() >= 12 ? 'PM' : 'AM'}
-        </span>
+      <h1 className="text-8xl md:text-9xl font-bold font-headline tracking-tighter">
+        {timeString}
       </h1>
     </div>
   );
