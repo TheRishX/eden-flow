@@ -17,7 +17,7 @@ export function Clock() {
     return (
       <div className="text-center">
          <p className="opacity-80 text-lg">&nbsp;</p>
-         <h1 className="text-8xl md:text-9xl font-bold font-headline tracking-tighter">&nbsp;</h1>
+         <h1 className="text-7xl md:text-8xl font-bold font-headline tracking-tighter">&nbsp;</h1>
       </div>
     );
   }
@@ -28,7 +28,7 @@ export function Clock() {
   return (
     <div className="text-white text-center">
       <p className="opacity-80 text-lg">{dateString}</p>
-      <h1 className="text-8xl md:text-9xl font-bold font-headline tracking-tighter">
+      <h1 className="text-7xl md:text-8xl font-bold font-headline tracking-tighter">
         {timeString}
       </h1>
     </div>
