@@ -285,14 +285,14 @@ export default function ProvidenceTabPage() {
                       </TooltipProvider>
                     </header>
 
-                    <div className="flex-grow flex flex-col items-center justify-center text-center">
+                    <div className="flex-grow flex flex-col items-center justify-center text-center space-y-4">
                       <Clock />
                       <Greeting />
                       <Focus />
                       <BibleVerse />
                     </div>
                     
-                    <footer className="w-full flex flex-col items-center justify-center gap-4 pb-4">
+                    <footer className="w-full flex flex-col items-center justify-center gap-4 pb-8">
                       <QuickLinksGrid />
                     </footer>
                   </div>

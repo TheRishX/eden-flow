@@ -40,10 +40,10 @@ export function Greeting() {
     }
   };
 
-  if (!isClient) return <div className="h-10 mt-1" />;
+  if (!isClient) return <div className="h-12" />;
 
   return (
-    <div className="h-10 mt-1">
+    <div className="h-12 flex items-center justify-center">
       {isEditing ? (
         <form onSubmit={handleNameSubmit} className="flex items-center justify-center gap-2">
           <Input

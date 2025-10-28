@@ -44,10 +44,10 @@ export function Focus() {
     setIsEditing(true);
   };
 
-  if (!isClient) return <div className="h-[7.5rem] w-full" />;
+  if (!isClient) return <div className="h-32" />;
 
   return (
-    <div className="mt-8 text-white w-full max-w-lg mx-auto h-[7.5rem]">
+    <div className="text-white w-full max-w-lg mx-auto h-32 flex flex-col items-center justify-center">
       {isEditing ? (
         <div className="flex flex-col items-center gap-4 animate-fade-in-up">
           <form onSubmit={handleFocusSubmit} className="flex flex-col items-center gap-2">
@@ -65,7 +65,7 @@ export function Focus() {
         </div>
       ) : (
         <div className="group flex flex-col items-center gap-4 animate-fade-in-up">
-          <p className="text-lg opacity-80 mt-8">TODAY'S FOCUS</p>
+          <p className="text-lg opacity-80">TODAY'S FOCUS</p>
           <div className="flex items-center gap-3 text-2xl md:text-3xl font-semibold">
             <Checkbox
               id="focus-checkbox"
