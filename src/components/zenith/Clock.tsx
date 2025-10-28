@@ -27,7 +27,7 @@ export function Clock() {
 
   return (
     <div className="text-white text-center pt-4">
-      <p className="opacity-80 text-lg">{dateString}</p>
+      <p className="opacity-80 text-lg mb-2">{dateString}</p>
       <h1 className="text-6xl md:text-7xl font-bold font-headline tracking-tighter">
         {timeString}
       </h1>

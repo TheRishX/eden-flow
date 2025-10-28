@@ -43,7 +43,7 @@ export function Greeting() {
   if (!isClient) return <div className="h-12" />;
 
   return (
-    <div className="h-12 flex items-center justify-center">
+    <div className="h-12 flex items-center justify-center mt-2">
       {isEditing ? (
         <form onSubmit={handleNameSubmit} className="flex items-center justify-center gap-2">
           <Input
